@@ -1,0 +1,70 @@
+Implementing Caching for Travel Routes
+
+Several caching strategies can be considered for frequently accessed travel routes:
+
+1. In-Memory Cache (e.g., Redis)
+Pros:
+- Extremely fast access (microseconds)
+- Support for automatic expiration
+- Built-in eviction policies
+- Distributed caching capability
+- Ideal for real-time route lookups
+
+Cons:
+- Memory limitations
+- Cache invalidation complexity
+- Data persistence concerns
+- Additional infrastructure cost
+
+2. Database Caching
+Pros:
+- Persistent storage
+- ACID compliance
+- Better for large datasets
+- Built-in query optimization
+
+Cons:
+- Slower than in-memory caching
+- Higher resource usage
+- More complex to scale
+
+3. CDN Caching
+Pros:
+- Geographically distributed
+- Reduced latency for users
+- Handles high traffic well
+- Built-in DDoS protection
+
+Cons:
+- Higher cost
+- Less control over data
+- Not ideal for dynamic routes
+
+Example Implementation (Redis):
+
+# Cache key structure
+route:{trip_id}:{start_point}:{end_point}
+
+# Example Redis commands
+SET route:123:48.8566,2.3522:41.9028,12.4964 "{
+    path: [[48.8566,2.3522], [45.4642,9.1900], [41.9028,12.4964]],
+    distance: 1422.8,
+    duration: 14.5,
+    updated: '2023-12-01T10:00:00Z'
+}" EX 86400
+
+# Cache lookup
+GET route:123:48.8566,2.3522:41.9028,12.4964
+
+# Cache invalidation patterns
+DEL route:123:*  # Clear all routes for trip
+SCAN route:*     # List all cached routes
+EXPIRE route:123:48.8566,2.3522:41.9028,12.4964 3600  # Update TTL
+
+# Batch operations
+MSET route:123:* [...multiple routes...]
+MGET route:123:* 
+
+# Monitoring
+MONITOR           # Watch Redis commands in real-time
+INFO commandstats # Get command statistics

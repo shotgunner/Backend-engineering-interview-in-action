@@ -1,0 +1,43 @@
+
+
+
+# Database & Performance Questions
+
+
+
+8. "What approaches would you take to optimize bulk photo uploads for travel albums using Python? Consider both storage and processing aspects."
+
+# REST API Design Questions
+
+10. "How would you handle versioning in your REST APIs? Compare different approaches (URL, header, content negotiation)."
+
+11. "Explain how you would implement authentication and authorization in a FastAPI application. How would you handle JWT tokens?"
+
+# Scalability & Architecture Questions
+12. "How would you design a background job system using Celery for processing travel photos? Include error handling and retry mechanisms."
+
+13. "Explain how you would implement real-time trip updates using WebSockets in FastAPI. What challenges might you face with scale?"
+
+14. "Design a system to handle offline trip tracking data syncing when users regain internet connectivity. Consider conflict resolution."
+
+# Python-Specific Questions
+15. "Compare the performance implications of using dataclasses vs Pydantic models in FastAPI. When would you choose one over the other?"
+
+16. "How would you implement custom middleware in FastAPI to track API response times? Show example code."
+
+17. "Explain Python's async/await syntax and how it could benefit a travel application's backend services."
+
+# Go-Related Questions (Bonus)
+18. "Compare implementing middleware in Go vs Python web frameworks. What are the key differences?"
+
+19. "How would Go's goroutines and channels compare to Python's async/await for handling concurrent API requests?"
+
+20. "What advantages might Go offer for certain microservices in a primarily Python backend architecture?"
+
+# System Design Exercise Example
+"Design a system for Polarsteps that allows users to download offline maps for regions they plan to visit. Consider:
+- Storage optimization
+- Update mechanisms
+- Bandwidth considerations
+- Offline functionality
+- Integration with existing trip planning features"

@@ -1,0 +1,36 @@
+B-tree and GiST indexes serve different purposes in PostgreSQL, particularly for geospatial queries:
+
+B-tree Indexes:
+- Optimized for ordered data and equality/range comparisons
+- Work well with standard data types like numbers, text, dates
+- Not suitable for geospatial data as they can't effectively index multi-dimensional data
+- Support only < <= = >= > operators
+- Create a balanced tree structure for fast lookups
+
+GiST (Generalized Search Tree) Indexes:
+- Designed for complex data types including geometric/spatial data
+- Support custom indexing strategies and operators
+- Excellent for geospatial queries using PostGIS
+- Can handle containment, intersection, proximity queries
+- Allow R-tree implementation for spatial indexing
+
+When to use each for geospatial queries:
+
+Use GiST indexes when:
+- Working with geometric data types (point, polygon, etc.)
+- Need to perform spatial operations (contains, intersects, etc.)
+- Using PostGIS extensions
+- Doing nearest neighbor searches
+- Need to support complex custom operators
+
+Use B-tree indexes when:
+- Indexing individual coordinates as simple numbers
+- Only need to compare latitude/longitude values directly
+- Performing exact matches or range queries on single dimensions
+- Need to enforce uniqueness constraints
+
+Example scenarios:
+- Finding points within a radius: Use GiST
+- Sorting by latitude only: Use B-tree
+- Spatial joins: Use GiST
+- Point-in-polygon queries: Use GiST
