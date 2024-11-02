@@ -32,7 +32,49 @@
 
 19. "How would Go's goroutines and channels compare to Python's async/await for handling concurrent API requests?"
 
+Key differences:
+- Goroutines are lightweight threads managed by Go runtime, while async/await is cooperative multitasking at the application level
+- Goroutines can run in parallel across multiple CPU cores, Python async is single-threaded
+- Channels provide built-in communication between goroutines, Python needs external queues/events
+- Go has simpler error handling with explicit return values, Python uses try/except
+- Python async/await requires explicit marking of async functions, Go is more implicit
+- Goroutines have lower memory overhead than Python async tasks
+
+Performance implications:
+- Go generally handles high concurrency better due to parallel execution
+- Python async excels at I/O-bound tasks but limited by single thread
+- Go's garbage collection can cause occasional pauses
+- Python async has lower context switching overhead within single thread
+
+Use cases:
+- Go better for CPU-intensive parallel work
+- Python async good for I/O-heavy web services
+- Go scales better to many concurrent connections
+- Python async easier to reason about for sequential-style code"
+
 20. "What advantages might Go offer for certain microservices in a primarily Python backend architecture?"
+
+Key advantages:
+- Performance: Go's static compilation and efficient garbage collection make it ideal for compute-intensive services like image processing or data analytics
+- Concurrency: Native support for parallel execution via goroutines makes Go excellent for high-throughput services like real-time tracking or chat
+- Memory efficiency: Lower memory footprint compared to Python, beneficial for services handling many concurrent connections
+- Static typing: Catches errors at compile time, reducing runtime bugs in critical services
+- Simple deployment: Single binary deployment simplifies DevOps compared to Python's dependency management
+- Cross-compilation: Easy to build for different platforms from one machine
+
+Example use cases:
+- High-performance API gateways/proxies
+- Real-time websocket servers
+- CPU-intensive data processing pipelines
+- Services requiring maximum resource efficiency
+- Critical path services where performance matters most
+
+Integration considerations:
+- Need clear service boundaries and APIs
+- May require protocol standardization (e.g. gRPC)
+- Should evaluate operational complexity of managing multiple languages
+- Consider team expertise and learning curve
+- Ensure monitoring/observability compatibility
 
 # System Design Exercise Example
 "Design a system for Polarsteps that allows users to download offline maps for regions they plan to visit. Consider:
@@ -41,3 +83,71 @@
 - Bandwidth considerations
 - Offline functionality
 - Integration with existing trip planning features"
+
+
+21. "Explain in detail how Python's asyncio event loop works internally, including how it handles coroutines, tasks, and future objects. How would you implement a custom event loop?"
+
+Key points to cover:
+- Event loop internal architecture (selector implementation, ready queue)
+- Task scheduling and switching mechanisms
+- Integration with low-level callbacks and handle_events()
+- Future object state management
+- Exception handling across coroutines
+- Custom protocol implementations
+
+Advanced follow-ups:
+- How would you debug a deadlocked event loop?
+- What are the performance implications of task.__step()?
+- How does the loop handle thread safety with run_in_executor()?
+
+22. "Design a distributed rate limiter in Python that can handle millions of requests across multiple application servers. Consider:
+- Consistency requirements
+- Race conditions
+- Network partitions
+- Performance overhead"
+
+Expected discussion points:
+- Redis/distributed cache architecture
+- Token bucket vs leaky bucket algorithms
+- Clock synchronization challenges
+- Failure modes and recovery
+- Monitoring and alerting strategy
+
+23. "How would you implement a custom metaclass to create a singleton pattern that's both thread-safe and works correctly with inheritance? What are the pitfalls?"
+
+Key considerations:
+- Instance state management
+- Thread synchronization
+- Method resolution order
+- Pickle/unpickle behavior
+- Memory leaks
+- Inheritance edge cases
+
+24. "Explain Python's memory allocator internals and how you would profile and optimize memory usage in a large-scale application"
+
+Topics to cover:
+- PyMalloc implementation
+- Memory fragmentation
+- Reference cycles
+- Generational GC tuning
+- Memory pools and arenas
+- Large object space
+
+25. "Design and implement a distributed task queue system from scratch without using existing solutions like Celery. Consider:
+- Reliability guarantees
+- Task prioritization
+- Dead letter handling
+- Monitoring/observability
+- Scaling characteristics"
+
+Architecture components:
+- Broker design
+- Worker management
+- Result backend
+- Error handling
+- Task routing
+- State management
+
+These questions test deep Python knowledge, systems design, and practical experience with large-scale applications.
+
+
