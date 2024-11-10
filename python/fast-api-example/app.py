@@ -7,7 +7,8 @@ import time
 import jwt
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-
+import asyncio
+import time
 
 app = FastAPI(title='FastAPI APP')
 
@@ -69,6 +70,24 @@ async def logging_middleware(request: Request, call_next):
     # Log response details
     print(f"Response Status: {response.status_code}")
     return response
+
+@app.get("/terrible-ping")
+async def terrible_ping():
+    time.sleep(10) # I/O blocking operation for 10 seconds, the whole process will be blocked
+    
+    return {"pong": True}
+
+@app.get("/good-ping")
+def good_ping():
+    time.sleep(10) # I/O blocking operation for 10 seconds, but in a separate thread for the whole `good_ping` route
+
+    return {"pong": True}
+
+@app.get("/perfect-ping")
+async def perfect_ping():
+    await asyncio.sleep(10) # non-blocking I/O operation
+
+    return {"pong": True}
 
 
 @app.get("/")
