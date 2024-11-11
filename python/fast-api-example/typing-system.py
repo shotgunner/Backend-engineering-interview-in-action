@@ -3,6 +3,62 @@ from dataclasses import dataclass
 from typing import TypeVar, Generic, Protocol, Literal, Final, TypedDict, NewType, Union, Optional, Callable, Awaitable, Any, TypeGuard, overload, ParamSpec, Concatenate, ContextManager, runtime_checkable
 from abc import abstractmethod
 
+# python doesn't care about the hints, they are only used by type checkers like mypy.
+# why we need them?
+# 1. to provide more information to the type checker
+# 2. to provide more information to the developer
+# 3. to improve the performance of the code using less debugging time wasting
+
+
+# source from: https://fastapi.tiangolo.com/python-types/
+# simple types
+def get_items(item_a: str, item_b: int, item_c: float, item_d: bool, item_e: bytes):
+    return item_a, item_b, item_c, item_d, item_d, item_e
+
+# Generic types with type parameters¶
+# There are some data structures that can contain other values, like dict, list, set and tuple. And the internal values can have their own type too.
+def get_items_from_list(items: list[str]):  # in older versions of python we would use capital List instead of list
+    return items  # => list of strings
+
+def process_items(prices: dict[str, float]):
+    for item_name, item_price in prices.items():
+        print(item_name)
+        print(item_price)
+
+# Union types
+def process_item(item: int | str):
+    print(item)
+
+# older versions of python for using Union
+from typing import Union
+def process_item(item: Union[int, str]):
+    print(item)
+
+
+# Possibly None
+from typing import Optional
+def say_hi(name: Optional[str] = None):
+    if name is not None:
+        print(f"Hey {name}!")
+    else:
+        print("Hello World")
+
+# in python 3.10+ we can use the following syntax for None
+def say_hi(name: str | None = None):  # -> you don't need to Union[str, None] anymore in newer versions of python
+    if name is not None:
+        print(f"Hey {name}!")
+    else:
+        print("Hello World")
+
+# Generic types are all above examples like list, dict, Union, Optional, etc.
+# you can also use classes as types
+class User:
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+
+def get_user_name(user: User):
+    return user.name
 
 # Basic Annotated example with type and metadata
 # UserId = Annotated[int, "User identifier in our system"]
