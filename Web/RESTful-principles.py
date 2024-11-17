@@ -14,7 +14,16 @@
 
 # HTTP methods
 # GET: retrieve a resource
+
+# GOOD: GET /users/123
+# BAD: GET users/123/details => why? because the resource is not uniform. 
+# ANOTHER BAD: GET users/123?session_id=456 => why? because the request is not stateless.   
+# ANOTHER BAD: GET /get-user-details/123 => why? because "get" should not be in the url. method itself is descriptive.
+
 # POST: create a resource
+# GOOD: POST /users
+# BAD: POST /create-user => why? because "create" is a verb and should not be in the url.
+
 # PUT: update a resource
 # DELETE: delete a resource
 # PATCH: update a resource partially
