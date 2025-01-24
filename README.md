@@ -164,3 +164,8 @@ If you find this repository helpful, please consider:
 ---
 
 *Happy learning and good luck with your interviews! Remember: the best way to learn is by doing.*
+
+
+TODO:
+
+* Defensive programming => what is it ? is it good or bad ? some real production examples
