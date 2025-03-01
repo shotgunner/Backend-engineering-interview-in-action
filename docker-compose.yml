@@ -7,7 +7,7 @@
 #                        ┌───────┴───────┐
 #                        │  Prometheus   │ [Metrics Storage]
 #                        └───────┬───────┘
-#                                │ collects metrics
+#                                │ collects metrics using Scrape Configs
 #                                ▼
 #                        ┌───────────────┐
 #                        │     App       │ [Main Service]
@@ -55,6 +55,8 @@
 # - Grafana: Metrics visualization
 # - OpenTelemetry: Distributed tracing and metrics collection
 #
+name: Metrics
+
 services:
   db:
     image: postgres:15
@@ -111,8 +113,8 @@ services:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
+    # depends_on:
+    #   - elasticsearch
 
   prometheus:
     image: prom/prometheus:latest
@@ -133,7 +135,7 @@ services:
       - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
-
+    
   otel-collector:
     image: otel/opentelemetry-collector:latest
     command: ["--config=/etc/otel-collector-config.yaml"]
@@ -171,3 +173,14 @@ volumes:
   elasticsearch_data:
   prometheus_data:
   grafana_data:
+
+
+# networks:
+#  app-network:
+#     driver: host
+#     Driver options:
+#     - bridge: Default. Isolates containers in a virtual network, good for most cases.
+#     - host: Removes network isolation, shares host's network stack. Use for performance.
+#     - overlay: For multi-host networking, essential in Docker Swarm.
+#     - macvlan: Assigns MAC address to container, appears as physical device on network.
+#     - none: Disables networking. Use for maximum isolation.

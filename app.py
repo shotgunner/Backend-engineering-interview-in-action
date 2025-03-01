@@ -2,7 +2,7 @@ from flask import Flask, request
 import logging
 import time
 import random
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import Counter, Histogram, Gauge, start_http_server
 import redis
 from elasticsearch import Elasticsearch
 import psycopg2
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 # Initialize Prometheus metrics
 REQUEST_COUNT = Counter('app_requests_total', 'Total app requests')
 REQUEST_LATENCY = Histogram('app_request_latency_seconds', 'Request latency')
+ACTIVE_USERS = Gauge('app_active_users', 'Number of active users')
 
 # Initialize connections
 redis_client = redis.Redis(host='redis', port=6379)
@@ -55,9 +56,14 @@ def error():
     logger.error('This is a sample error!')
     return 'Error generated', 500
 
-@app.route('/metrics')
-def metrics():
-    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+# We don't need this endpoint because we are
+# already exposing metrics using start_http_server
+# prometheus will scrape this endpoint automatically
+# from that server (on port 4444)
+
+# @app.route('/metrics')
+# def metrics():
+#     return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 @app.route('/db-test')
 def db_test():
@@ -74,4 +80,7 @@ def db_test():
         return 'DB Connection Failed', 500
 
 if __name__ == '__main__':
+    import threading
+    thread = threading.Thread(target=start_http_server, args=(4444,))
+    thread.start()
     app.run(host='0.0.0.0', port=5000)
