@@ -3,3 +3,5 @@ redis
 elasticsearch
 psycopg2-binary
 prometheus_client 
+flask-limiter
+kafka-python

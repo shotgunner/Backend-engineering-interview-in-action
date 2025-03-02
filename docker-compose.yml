@@ -55,38 +55,38 @@
 # - Grafana: Metrics visualization
 # - OpenTelemetry: Distributed tracing and metrics collection
 #
-name: Metrics
+version: '3'
 
 services:
-  db:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=travelapp
-      - POSTGRES_USER=postgres 
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./sql-practice.sql:/docker-entrypoint-initdb.d/init.sql
+  # db:
+  #   image: postgres:15
+  #   environment:
+  #     - POSTGRES_DB=travelapp
+  #     - POSTGRES_USER=postgres 
+  #     - POSTGRES_PASSWORD=postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #     - ./sql-practice.sql:/docker-entrypoint-initdb.d/init.sql
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - db
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+  #     - PGADMIN_DEFAULT_PASSWORD=admin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - db
 
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes
+  # redis:
+  #   image: redis:latest
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   command: redis-server --appendonly yes
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
@@ -98,23 +98,23 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.9
-    ports:
-      - "5044:5044"
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
-    depends_on:
-      - elasticsearch
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:7.17.9
+  #   ports:
+  #     - "5044:5044"
+  #   volumes:
+  #     - ./logstash/pipeline:/usr/share/logstash/pipeline
+  #   depends_on:
+  #     - elasticsearch
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.9
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    # depends_on:
-    #   - elasticsearch
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:7.17.9
+  #   ports:
+  #     - "5601:5601"
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   depends_on:
+  #     - elasticsearch
 
   prometheus:
     image: prom/prometheus:latest
@@ -127,6 +127,11 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
 
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+
   grafana:
     image: grafana/grafana:latest
     ports:
@@ -136,37 +141,75 @@ services:
     depends_on:
       - prometheus
     
-  otel-collector:
-    image: otel/opentelemetry-collector:latest
-    command: ["--config=/etc/otel-collector-config.yaml"]
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
-    ports:
-      - "4317:4317"   # OTLP gRPC receiver
-      - "4318:4318"   # OTLP http receiver
-      - "8888:8888"   # Prometheus metrics exposed by the collector
-      - "8889:8889"   # Prometheus exporter metrics
-    depends_on:
-      - prometheus
-      - elasticsearch
+  # otel-collector:
+  #   image: otel/opentelemetry-collector:latest
+  #   command: ["--config=/etc/otel-collector-config.yaml"]
+  #   volumes:
+  #     - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+  #   ports:
+  #     - "4317:4317"   # OTLP gRPC receiver
+  #     - "4318:4318"   # OTLP http receiver
+  #     - "8888:8888"   # Prometheus metrics exposed by the collector
+  #     - "8889:8889"   # Prometheus exporter metrics
+  #   depends_on:
+  #     - prometheus
+  #     - elasticsearch
 
-  app:
-    build: .
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./app.py:/app/app.py
-    depends_on:
-      - db
-      - redis
-      - elasticsearch
-      - otel-collector
+  # app:
+  #   build: .
+  #   ports:
+  #     - "5000:5000"
+  #     - "4444:4444"
+  #   volumes:
+  #     - ./app.py:/app/app.py
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
     environment:
-      - FLASK_ENV=development
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
-      - OTEL_SERVICE_NAME=flask-app
-    restart: unless-stopped
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      kafka:
+        condition: service_healthy
 volumes:
   postgres_data:
   redis_data:
