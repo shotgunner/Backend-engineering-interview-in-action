@@ -22,6 +22,22 @@ A comprehensive resource for backend engineering interview preparation, featurin
   - Practical usage in production systems
   - Performance characteristics and tradeoffs
 
+### ✨ Key Learning Areas ✨
+
+This repository is constantly evolving. We've recently enhanced the following sections, making them great starting points or areas to revisit for deep dives:
+
+-   **[Data Structures (`DataStructures/`)](DataStructures/)**:
+    *   Explore common data structures crucial for interviews.
+    *   Features an improved `README.md` guiding you through the available content.
+    *   Includes a practical, commented implementation of a Skip List (`skiplist.py`) with an illustrative example and comprehensive unit tests (`test_skiplist.py`) to ensure correctness and demonstrate testing practices.
+
+-   **[System Design (`SystemDesign/`)](SystemDesign/)**:
+    *   Delve into system design concepts with practical examples.
+    *   The main `README.md` in this section now provides a better overview and links to example systems.
+    *   Example systems like the "Simple Trading Platform" and "Trip Sharing Application" have detailed READMEs and documented Python (Flask) application code, showcasing API design, database interaction (SQLite), and asynchronous processing with Kafka (for the trading platform).
+
+We encourage you to explore these sections for robust interview preparation materials, complete with code you can run and test.
+
 ### 🏗️ System Design
 - [System Design Principles](SystemDesign/)
   - Real-world case studies
